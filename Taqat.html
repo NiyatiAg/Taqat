@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taqat | The Essence of Power</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Elegance -->
+    <!-- Application Structure Plan: The application is designed as a single-page, scrolling narrative to create a luxurious and immersive brand experience. This structure is better suited for a consumer product than a data dashboard. It begins with a captivating hero section, moves to an interactive exploration of the scent profile, showcases the exquisite packaging, defines the target audience, visually contextualizes the price point, and concludes with the founder's details. This flow guides the user through a story, making the product more desirable and memorable. -->
+    <!-- Visualization & Content Choices: 
+        - Scent Profile -> Goal: Engage & Inform -> Viz/Method: Interactive cards for each ingredient and a Radar Chart for the overall scent balance. -> Interaction: Hovering over cards reveals detailed descriptions. -> Justification: Transforms a static list into an engaging exploration, allowing users to 'feel' the fragrance's composition. The radar chart offers a quick, memorable visual summary. -> Library: Vanilla JS for interaction, Chart.js for visualization.
+        - Pricing -> Goal: Contextualize & Inform -> Viz/Method: A horizontal bar chart comparing Taqat's price to general market segments. -> Interaction: Chart.js tooltips provide exact price ranges on hover. -> Justification: This visually reinforces the "accessible luxury" message far more effectively than text alone, providing immediate market context. -> Library: Chart.js.
+        - Packaging & Audience -> Goal: Inform & Convey Quality -> Viz/Method: Elegantly styled content cards using Tailwind CSS. -> Interaction: Subtle hover effects to add a dynamic feel. -> Justification: A clean, sophisticated presentation that aligns with the brand's luxurious identity. -> Library/Method: Tailwind CSS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #FDFBF5;
+            color: #402E32;
+        }
+        h1, h2, h3 {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .ingredient-card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .ingredient-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .ingredient-card .description {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 10px;
+            width: 200px;
+            background-color: #402E32;
+            color: #FDFBF5;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+        .ingredient-card:hover .description {
+            display: block;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <nav class="bg-[#FDFBF5]/80 backdrop-blur-md sticky top-0 z-50 p-4 shadow-sm">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="#top"><img src="logo.jpg" alt="Taqat Logo" class="h-10"></a>
+          
+            <div class="hidden md:flex space-x-8 text-lg">
+                <a href="#scent" class="hover:text-[#B5651D] transition-colors">The Scent</a>
+                <a href="#design" class="hover:text-[#B5651D] transition-colors">The Design</a>
+                <a href="#product" class="hover:text-[#B5651D] transition-colors">The Product</a>
+                <a href="#audience" class="hover:text-[#B5651D] transition-colors">The Woman</a>
+                <a href="#pricing" class="hover:text-[#B5651D] transition-colors">The Value</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="h-[80vh] min-h-[500px] flex items-center justify-center text-center bg-cover bg-center" style="background-image: linear-gradient(rgba(253, 251, 245, 0.6), rgba(253, 251, 245, 0.9)), url('home.jpg');">
+        <div class="max-w-2xl mx-auto px-4">
+            <h1 class="text-6xl md:text-8xl font-extrabold text-[#402E32] tracking-tight">Taqat</h1>
+            <p class="text-2xl md:text-3xl mt-4 font-semibold text-[#B5651D]">The Essence of Power</p>
+            <p class="mt-6 text-lg text-[#B5651D]/90">Every women should feel like a Queen</p>
+        <p class="mt-6 text-lg text-[#402E32]/90">A luxury fragrance for the modern woman, crafted to evoke the confidence and grace within. Discover a scent that is as versatile and powerful as you are.</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-16 md:py-24 space-y-24">
+
+        <section id="scent" class="scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold">The Scent Profile</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">This section allows you to interactively explore the four core notes that create the unique and complex aroma of Taqat. Hover over each ingredient to learn about its role in the fragrance, and view the chart to understand the overall character of the scent.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-3xl font-semibold mb-6 text-center md:text-left">An Olfactory Journey</h3>
+                    <p class="mb-8 text-gray-700">Taqat is a carefully balanced composition of warmth, richness, and vibrancy. Each note is selected to create a layered experience that evolves throughout the day, leaving a memorable and sophisticated trail.</p>
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="ingredient-card relative bg-white p-6 rounded-lg shadow-md text-center cursor-pointer">
+                            <div class="text-4xl mb-2">🍦</div>
+                            <h4 class="font-semibold text-xl">Vanilla</h4>
+                            <div class="description">A warm, comforting base note that adds a touch of sweetness and sophistication.</div>
+                        </div>
+                        <div class="ingredient-card relative bg-white p-6 rounded-lg shadow-md text-center cursor-pointer">
+                            <div class="text-4xl mb-2">☕</div>
+                            <h4 class="font-semibold text-xl">Coffee</h4>
+                             <div class="description">A rich, invigorating aroma that provides an energetic and unique twist.</div>
+                        </div>
+                        <div class="ingredient-card relative bg-white p-6 rounded-lg shadow-md text-center cursor-pointer">
+                           <div class="text-4xl mb-2">🪵</div>
+                            <h4 class="font-semibold text-xl">Woody</h4>
+                             <div class="description">Deep, earthy tones that ground the fragrance and give it a lasting, elegant finish.</div>
+                        </div>
+                        <div class="ingredient-card relative bg-white p-6 rounded-lg shadow-md text-center cursor-pointer">
+                            <div class="text-4xl mb-2">🍓</div>
+                            <h4 class="font-semibold text-xl">Fruity</h4>
+                             <div class="description">A bright, fresh opening note that adds a vibrant and playful first impression.</div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="chart-container">
+                        <canvas id="scentProfileChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="design" class="scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold">Unboxing Luxury</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">The Taqat experience begins before the first spray. Every detail of our packaging is meticulously designed to reflect the quality of the fragrance within. This section highlights the premium features that make Taqat a true collector's item.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div class="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                    <h3 class="text-2xl font-semibold mb-3">Embossed Logo</h3>
+                    <p class="text-gray-600">A subtle, tactile mark of quality that speaks to the craftsmanship and attention to detail invested in every bottle.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                    <h3 class="text-2xl font-semibold mb-3">Crystal Cap</h3>
+                    <p class="text-gray-600">A weighty, premium finish that feels substantial in your hand, ensuring a satisfying and secure closure.</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                    <h3 class="text-2xl font-semibold mb-3">Velvet-Lined Box</h3>
+                    <p class="text-gray-600">An unforgettable unboxing experience that elevates the product, making it the perfect gift or personal treasure.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="product" class="scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold">The Product</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">More than just a scent, the Taqat bottle is a statement piece. This section showcases the elegance and minimalist beauty of the final product, designed to sit proudly on any vanity.</p>
+            </div>
+            <div class="bg-white p-8 rounded-lg shadow-lg flex justify-center">
+                <img src="bottle.jpg" alt="Taqat Perfume Bottle" class=" h-96 shadow-xl max-w-[200px] md:max-w-sm">
+            </div>
+        </section>
+
+        <section id="audience" class="scroll-mt-20">
+             <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold">The Taqat Woman</h2>
+                 <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">Taqat is not defined by age, but by attitude. It is a fragrance for every woman who embodies strength and elegance in her own unique way. This section explores the versatility of our scent and its appeal to a wide, diverse audience.</p>
+            </div>
+            <div class="bg-white rounded-lg shadow-lg p-8 md:p-12 text-center max-w-4xl mx-auto">
+                 <h3 class="text-3xl font-semibold mb-4">A Scent for Every Generation</h3>
+                 <p class="text-lg text-gray-700 leading-relaxed">From the ambitious energy of a college student to the refined grace of an elder, Taqat adapts and complements every stage of a woman's life. Its complex profile ensures it is never out of place, whether in a lecture hall, a boardroom, or at a gala. It is a timeless and empowering fragrance designed to be a signature scent for a lifetime.</p>
+            </div>
+        </section>
+        
+        <section id="pricing" class="scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold">Accessible Luxury</h2>
+                <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-600">We believe that luxury should be within reach. This interactive chart visualizes Taqat's price point in the broader fragrance market, demonstrating our commitment to providing exceptional quality and design at a fair value. Hover over the bars for more detail.</p>
+            </div>
+            <div class="bg-white p-8 rounded-lg shadow-lg">
+                <div class="chart-container h-80 md:h-96 max-w-3xl">
+                     <canvas id="pricingChart"></canvas>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-[#402E32] text-[#FDFBF5] py-12">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-4">Experience Taqat</h2>
+            <p class="mb-6">A creation by</p>
+            <p class="text-2xl font-semibold tracking-widest">Tejaswini Bishoyi</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', e => {
+                    e.preventDefault();
+                    const targetId = e.currentTarget.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            const scentCtx = document.getElementById('scentProfileChart').getContext('2d');
+            new Chart(scentCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Warmth (Vanilla)', 'Richness (Coffee)', 'Depth (Woody)', 'Vibrancy (Fruity)', 'Sweetness'],
+                    datasets: [{
+                        label: 'Scent Profile',
+                        data: [8, 7, 6, 5, 7.5],
+                        backgroundColor: 'rgba(181, 101, 29, 0.2)',
+                        borderColor: 'rgba(181, 101, 29, 1)',
+                        pointBackgroundColor: 'rgba(181, 101, 29, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(181, 101, 29, 1)'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(64, 46, 50, 0.2)'
+                            },
+                            grid: {
+                                color: 'rgba(64, 46, 50, 0.2)'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 14,
+                                    family: "'Poppins', sans-serif"
+                                },
+                                color: '#402E32'
+                            },
+                            ticks: {
+                                backdropColor: '#FDFBF5',
+                                color: '#402E32'
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 10
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            const pricingCtx = document.getElementById('pricingChart').getContext('2d');
+            new Chart(pricingCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Standard Designer', 'Taqat', 'Niche & High Luxury'],
+                    datasets: [{
+                        label: 'Price in INR',
+                        data: [
+                            [3000, 6000],
+                            [1000, 5000],
+                            [8000, 25000]
+                        ],
+                        backgroundColor: [
+                            'rgba(192, 192, 192, 0.6)',
+                            'rgba(181, 101, 29, 0.6)',
+                            'rgba(212, 175, 55, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(192, 192, 192, 1)',
+                            'rgba(181, 101, 29, 1)',
+                            'rgba(212, 175, 55, 1)'
+                        ],
+                        borderWidth: 1,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Price Range (INR)',
+                                font: { size: 14, family: "'Poppins', sans-serif" }
+                            }
+                        },
+                        y: {
+                           ticks: {
+                                font: { size: 14, family: "'Poppins', sans-serif" }
+                           }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    return `Range: ₹${value[0]} - ₹${value[1]}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
